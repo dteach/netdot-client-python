@@ -623,7 +623,6 @@ class Connect(object):
           try:
             iface_vlans = self.get_object_by_filter('interfacevlan', 'interface', iface)
             for iv in iface_vlans['InterfaceVlan'].keys():
-                print iv
                 if iface_vlans['InterfaceVlan'][iv]['vlan'] not in dev_vlans:
                     dev_vlans.append(iface_vlans['InterfaceVlan'][iv]['vlan'])
           except requests.exceptions.HTTPError as e:
