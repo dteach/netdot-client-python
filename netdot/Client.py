@@ -452,6 +452,25 @@ class Connect(object):
       person = self.get_person_by_username(user)
       return self.get_contact_by_person_id(person['id'])
 
+  def get_grouprights_by_username(self, user):
+      """
+      Returns accessrights for a given username
+
+      Arguments:
+       user -- Netdot Username
+
+      Usage:
+       response = netdot.Client.get_accesrights_by_username("mary")
+      """
+      contacts = self.get_contact_by_username(user)
+      groupright = {}
+      print contacts
+      for values in contacts['Contact'].values():
+          groupright += self.get_grouprights_by_conlist_id(values['contactlist'])
+
+      return groupright
+
+
   def get_grouprights_by_conlist_id(self, id):
       """
       Returns a single-level dict of the requested group's
