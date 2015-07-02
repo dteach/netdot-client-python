@@ -454,7 +454,7 @@ class Connect(object):
 
     def get_grouprights_by_username(self, user):
         """
-        Returns accessrights for a given username
+        Returns grouprights for a given username
 
         Arguments:
          user -- Netdot Username
@@ -467,14 +467,64 @@ class Connect(object):
 
         for values in contacts['Contact'].values():
             try:
-                groupright.update(self.get_grouprights_by_conlist_id(values['contactlist_xlink'].split('/')[1]))
+                gr = self.get_grouprights_by_conlist_id(values['contactlist_xlink'].split('/')[1]).values()[0]
+                groupright.update(gr)
             except requests.HTTPError:
                 # there weren't any grouprights associated with that conlist. No big deal.
                 pass
 
-        return groupright
+        return {'GroupRight': groupright}
 
-    def get_access_right_by_id
+    def get_accessright_by_id(self, id):
+        """
+        Returns accessrights for a given id
+
+        Arguments:
+         user -- Netdot Username
+
+        Usage:
+         response = netdot.Client.get_accessrights_by_id("id")
+        """
+        return self.get('/accessright/'+id)
+
+    def get_accessrights_by_username(self, user):
+        """
+        Returns accessrights for a given user
+
+        Arguments:
+         user -- Netdot Username
+
+        Usage:
+         response = netdot.Client.get_accessrights_by_username("user")
+        """
+        accessrights = {}
+        grouprights = self.get_grouprights_by_username(user)
+        for vals in grouprights['GroupRight'].values():
+            # some values return in the grouprights don't have an accessright_xlink
+            if vals.has_key('accessright_xlink'):
+                # split the accessright_xlink value to get the ID
+                ar = self.get_accessright_by_id(vals['accessright_xlink'].split('/')[1])
+                accessrights.update({ar['id']: ar})
+            else:
+                pass
+        return {'AccessRight': accessrights}
+
+    def get_device_accessrights_by_username(self, user):
+        """
+        Returns devices rights for a given user
+
+        Arguments:
+         user -- Netdot Username
+
+        Usage:
+         response = netdot.Client.get_device_accessrights_by_username("user")
+        """
+        devices = {}
+        accessrights = self.get_accessrights_by_username(user)
+        for ars in accessrights['AccessRight'].values():
+            if ars['object_class'] == 'Device':
+                devices.update(self.get_object_by_id('Device', ars['object_id'])['Device'])
+        return {'Device': devices}
 
     def get_grouprights_by_conlist_id(self, id):
         """
