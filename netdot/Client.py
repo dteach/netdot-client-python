@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python
 # encoding: utf-8
 """
 Client.py
@@ -59,7 +59,7 @@ class Connect(object):
         if self.debug:
             print "DEBUG MODE: ON"
         self.http = requests.session()
-        self.http.verify = False
+        self.http.verify = True
 
         self.server = server
         self.base_url = server + '/rest'
