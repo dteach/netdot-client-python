@@ -416,6 +416,19 @@ class Connect(object):
         """
         return self.delete("/" + object + "/" + id)
 
+    def get_site(self, site=None):
+        """
+        This function returns a multi-level dict for the site requests.
+        If no site is requested, all sites are returned
+        Arguments:
+            site -- name of the site.
+        Usage:
+            response = netdot.Client.get_site(site="Lawrence Hall")
+        """
+        if site:
+            return self.get("/site?name=" + site)
+        else:
+            return self.get("/site")
     def get_contact_by_person_id(self, id):
         """
         Returns contact information for given person ID
